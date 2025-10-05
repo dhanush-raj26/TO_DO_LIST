@@ -1,8 +1,12 @@
 import java.util.*;
+
 class Task {
+    int taskId;
     String description;
     boolean isDone;
-    Task(String description) {
+
+    Task(int id, String description) {
+        this.taskId = id;
         this.description = description;
         this.isDone = false;
     }
@@ -10,38 +14,51 @@ class Task {
 
 public class ToDoMethods {
     private ArrayList<Task> tasks = new ArrayList<>();
+    private static int idCounter = 1; 
 
     public void addTask(String desc) {
-        tasks.add(new Task(desc));
+        tasks.add(new Task(idCounter++, desc));
     }
 
+    
     public void viewTasks() {
         if (tasks.isEmpty()) {
             System.out.println("No tasks yet.");
         } else {
-            for (int i = 0; i < tasks.size(); i++) {
-                Task t = tasks.get(i);
+            for (Task t : tasks) {
                 String status = t.isDone ? "[Done]" : "[Undone]";
-                System.out.println((i+1) + ". " + t.description + " " + status);
+                System.out.println("Task ID: " + t.taskId + " | " + t.description + " " + status);
             }
         }
     }
 
-    public void toggleTask(int idx) {
-        if (idx > 0 && idx <= tasks.size()) {
-            tasks.get(idx-1).isDone = !tasks.get(idx-1).isDone;
-            System.out.println("Task status toggled.");
+
+    public void toggleTask(int id) {
+        Task t = findTaskById(id);
+        if (t != null) {
+            t.isDone = !t.isDone;
+            System.out.println("Task ID " + id + " status toggled.");
         } else {
-            System.out.println("Invalid task number!");
+            System.out.println("Invalid Task ID!");
         }
     }
 
-    public void removeTask(int idx) {
-        if (idx > 0 && idx <= tasks.size()) {
-            tasks.remove(idx-1);
-            System.out.println("Task removed.");
+
+    public void removeTask(int id) {
+        Task t = findTaskById(id);
+        if (t != null) {
+            tasks.remove(t);
+            System.out.println("Task ID " + id + " removed.");
         } else {
-            System.out.println("Invalid task number!");
+            System.out.println("Invalid Task ID!");
         }
+    }
+
+    private Task findTaskById(int id) {
+        for (Task t : tasks) {
+            if (t.taskId == id)
+                return t;
+        }
+        return null;
     }
 }
